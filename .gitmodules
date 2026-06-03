@@ -1,0 +1,3 @@
+[submodule "llm-workflow-content"]
+	path = llm-workflow-content
+	url = https://github.com/bijanp24/LLM-Workflow.git

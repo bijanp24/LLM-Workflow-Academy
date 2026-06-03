@@ -1,0 +1,66 @@
+@if (quiz(); as q) {
+  <section class="quiz" [class.submitted]="submitted()">
+    <header class="quiz-head">
+      <h2>{{ q.title }}</h2>
+      <p class="hint">Pass mark: {{ q.passingScore * 100 }}%</p>
+    </header>
+
+    @for (question of q.questions; track question.id; let i = $index) {
+      <fieldset class="question" [class.correct]="submitted() && isCorrect(question)"
+                [class.wrong]="submitted() && !isCorrect(question)">
+        <legend>{{ i + 1 }}. {{ question.prompt }}</legend>
+
+        @switch (question.type) {
+          @case ('multiple-choice') {
+            <ul class="options">
+              @for (opt of options(question); track $index) {
+                <li>
+                  <button type="button"
+                          class="option"
+                          [class.chosen]="isSelected(question.id, $index)"
+                          [class.answer]="submitted() && question.answer === $index"
+                          [disabled]="submitted()"
+                          (click)="select(question.id, $index)">
+                    {{ opt }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+          @case ('true-false') {
+            <div class="options tf">
+              <button type="button" class="option"
+                      [class.chosen]="isSelected(question.id, true)"
+                      [class.answer]="submitted() && question.answer === true"
+                      [disabled]="submitted()"
+                      (click)="select(question.id, true)">True</button>
+              <button type="button" class="option"
+                      [class.chosen]="isSelected(question.id, false)"
+                      [class.answer]="submitted() && question.answer === false"
+                      [disabled]="submitted()"
+                      (click)="select(question.id, false)">False</button>
+            </div>
+          }
+        }
+
+        @if (submitted()) {
+          <p class="explanation">
+            <strong>{{ isCorrect(question) ? 'Correct.' : 'Not quite.' }}</strong>
+            {{ question.explanation }}
+          </p>
+        }
+      </fieldset>
+    }
+
+    @if (!submitted()) {
+      <button type="button" class="submit" [disabled]="!allAnswered()" (click)="submit()">
+        {{ allAnswered() ? 'Submit answers' : 'Answer every question to submit' }}
+      </button>
+    } @else if (result(); as r) {
+      <div class="result" [class.pass]="r.passed">
+        <p class="score">{{ r.score }} / {{ r.total }} correct — {{ r.passed ? 'Passed 🎉' : 'Not passed yet' }}</p>
+        <button type="button" class="retry" (click)="retry()">Try again</button>
+      </div>
+    }
+  </section>
+}

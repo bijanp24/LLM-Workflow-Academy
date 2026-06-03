@@ -1,0 +1,85 @@
+.hero {
+  margin-bottom: 2.5rem;
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin: 0 0 0.5rem;
+  }
+  h1 {
+    margin: 0 0 0.75rem;
+    font-size: 2.2rem;
+    line-height: 1.15;
+  }
+  .lead {
+    margin: 0 0 1.5rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 60ch;
+  }
+  .cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.65rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    &:hover { filter: brightness(1.08); }
+  }
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .num {
+    width: 1.8rem;
+    height: 1.8rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  &.done .num { background: var(--accent); color: #fff; }
+
+  .card-title { font-weight: 600; }
+
+  .tags { display: flex; gap: 0.4rem; }
+  .tag {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: var(--surface-3);
+    color: var(--muted);
+
+    &.reading { background: transparent; border: 1px solid var(--border); }
+    &.score { background: var(--surface-3); }
+    &.score.pass { background: var(--accent-soft); color: var(--accent); }
+  }
+}
+
+.loading { color: var(--muted); }

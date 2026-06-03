@@ -1,0 +1,94 @@
+.quiz {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.quiz-head {
+  margin-bottom: 1.25rem;
+  h2 { margin: 0 0 0.25rem; font-size: 1.3rem; }
+  .hint { margin: 0; font-size: 0.8rem; color: var(--muted); }
+}
+
+.question {
+  border: none;
+  border-left: 3px solid var(--border);
+  margin: 0 0 1.25rem;
+  padding: 0.25rem 0 0.5rem 1rem;
+
+  legend { font-weight: 600; padding: 0; margin-bottom: 0.75rem; }
+
+  &.correct { border-left-color: var(--ok); }
+  &.wrong { border-left-color: var(--bad); }
+}
+
+.options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.tf { flex-direction: row; }
+}
+
+.option {
+  text-align: left;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+
+  &:hover:not(:disabled) { border-color: var(--accent); }
+  &.chosen { border-color: var(--accent); background: var(--accent-soft); }
+  &.answer { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+  &:disabled { cursor: default; }
+
+  .tf & { flex: 1; text-align: center; }
+}
+
+.explanation {
+  margin: 0.75rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  strong { color: var(--text); }
+}
+
+.submit,
+.retry {
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit {
+  background: var(--accent);
+  color: #fff;
+  &:disabled { background: var(--surface-3); color: var(--muted); cursor: default; }
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+
+  &.pass { background: color-mix(in srgb, var(--ok) 14%, transparent); }
+
+  .score { margin: 0; font-weight: 600; }
+  .retry { background: var(--surface-3); color: var(--text); }
+}

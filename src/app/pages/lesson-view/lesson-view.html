@@ -1,0 +1,26 @@
+@if (lesson(); as l) {
+  <article class="lesson">
+    <p class="crumb"><a routerLink="/">Course</a> · Lesson {{ index() + 1 }}</p>
+
+    <markdown class="doc" [src]="docUrl()" [mermaid]="true" (ready)="onReady()" />
+
+    @if (l.quiz; as quizPath) {
+      <app-quiz [quizPath]="quizPath" [lessonId]="l.id" />
+    }
+
+    <nav class="lesson-pager">
+      @if (prev(); as p) {
+        <a class="pager prev" [routerLink]="['/lesson', p.id]">← {{ p.title }}</a>
+      } @else {
+        <span></span>
+      }
+      @if (next(); as n) {
+        <a class="pager next" [routerLink]="['/lesson', n.id]">{{ n.title }} →</a>
+      } @else {
+        <a class="pager next" routerLink="/">Finish ✓</a>
+      }
+    </nav>
+  </article>
+} @else {
+  <p class="loading">Loading lesson…</p>
+}
