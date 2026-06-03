@@ -1,0 +1,14 @@
+[build]
+  # Init the LLM-Workflow content submodule, then build the Angular app.
+  command = "git submodule update --init --recursive && npm run build"
+  publish = "dist/llm-workflow-academy/browser"
+
+[build.environment]
+  # Angular 21 requires Node 20.19+ / 22 / 24
+  NODE_VERSION = "22"
+
+# SPA fallback: let Angular's router handle deep links (e.g. /lesson/concepts)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
