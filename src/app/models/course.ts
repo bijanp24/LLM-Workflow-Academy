@@ -1,3 +1,17 @@
+export interface CourseSummary {
+  id: string;
+  title: string;
+  description: string;
+  /** path to the course manifest JSON, relative to the content root */
+  manifest: string;
+}
+
+export interface Catalog {
+  title: string;
+  description: string;
+  courses: CourseSummary[];
+}
+
 export type QuestionType = 'multiple-choice' | 'true-false';
 
 interface BaseQuestion {

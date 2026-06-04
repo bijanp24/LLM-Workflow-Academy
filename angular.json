@@ -33,6 +33,12 @@
                 "input": "llm-workflow-content",
                 "output": "content",
                 "ignore": ["**/node_modules/**", "**/.git/**"]
+              },
+              {
+                "glob": "**/*.{md,json}",
+                "input": "local-content",
+                "output": "content",
+                "ignore": ["**/node_modules/**"]
               }
             ],
             "styles": [

@@ -2,37 +2,65 @@
   <aside class="sidebar">
     <a class="brand" routerLink="/">
       <span class="brand-mark">⚙</span>
-      <span class="brand-text">LLM-Workflow<br /><small>Academy</small></span>
+      <span class="brand-text">LLM<br /><small>Academy</small></span>
     </a>
 
-    @if (course(); as c) {
-      <div class="progress">
-        <div class="progress-bar"><span [style.width.%]="percent()"></span></div>
-        <p class="progress-label">{{ completed() }} / {{ lessons().length }} lessons · {{ percent() }}%</p>
-      </div>
+    @if (courseId(); as cId) {
+      <!-- Inside a course: show lesson nav + progress -->
+      <a class="all-courses-link" routerLink="/">← All courses</a>
 
-      <nav class="lesson-nav">
-        <ol>
-          @for (lesson of lessons(); track lesson.id; let i = $index) {
-            <li>
-              <a
-                [routerLink]="['/lesson', lesson.id]"
-                routerLinkActive="active"
-                class="lesson-link"
-                [class.done]="lessonComplete(lesson)"
-              >
-                <span class="state" aria-hidden="true">{{ lessonComplete(lesson) ? '✓' : i + 1 }}</span>
-                <span class="title">{{ lesson.title }}</span>
-                @if (lesson.quiz) {
-                  <span class="quiz-tag" title="Has a quiz">quiz</span>
-                }
-              </a>
-            </li>
-          }
-        </ol>
-      </nav>
+      @if (activeCourse(); as c) {
+        <p class="sidebar-course-title">{{ c.title }}</p>
+
+        <div class="progress">
+          <div class="progress-bar"><span [style.width.%]="percent()"></span></div>
+          <p class="progress-label">{{ completed() }} / {{ lessons().length }} lessons · {{ percent() }}%</p>
+        </div>
+
+        <nav class="lesson-nav">
+          <ol>
+            @for (lesson of lessons(); track lesson.id; let i = $index) {
+              <li>
+                <a
+                  [routerLink]="['/course', cId, 'lesson', lesson.id]"
+                  routerLinkActive="active"
+                  class="lesson-link"
+                  [class.done]="lessonComplete(lesson)"
+                >
+                  <span class="state" aria-hidden="true">{{ lessonComplete(lesson) ? '✓' : i + 1 }}</span>
+                  <span class="title">{{ lesson.title }}</span>
+                  @if (lesson.quiz) {
+                    <span class="quiz-tag" title="Has a quiz">quiz</span>
+                  }
+                </a>
+              </li>
+            }
+          </ol>
+        </nav>
+      } @else {
+        <p class="loading">Loading course…</p>
+      }
     } @else {
-      <p class="loading">Loading course…</p>
+      <!-- On the catalog page: show course list -->
+      @if (catalog(); as cat) {
+        <nav class="catalog-nav">
+          <p class="catalog-nav-label">Courses</p>
+          <ul>
+            @for (course of cat.courses; track course.id; let i = $index) {
+              <li>
+                <a
+                  [routerLink]="['/course', course.id]"
+                  routerLinkActive="active"
+                  class="catalog-link"
+                >
+                  <span class="catalog-num">{{ i + 1 }}</span>
+                  <span>{{ course.title }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      }
     }
 
     <footer class="sidebar-footer">

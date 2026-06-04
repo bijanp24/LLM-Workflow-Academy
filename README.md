@@ -1,14 +1,13 @@
-# LLM-Workflow Academy
+# LLM Academy
 
-A free, static **continuing-education web app** that turns the
-[`LLM-Workflow`](https://github.com/bijanp24/LLM-Workflow) documentation into an
-interactive course — lessons rendered from markdown, with true/false and multiple-choice
-quizzes and locally-saved progress.
+A free, static **Learning Management System** that delivers self-paced continuing education on working effectively and safely with large language models.
 
-It is a **pure viewer**, the way the Angular docs site is separate from Angular itself.
-The course content (markdown + quizzes) lives in the `LLM-Workflow` repo, included here
-as a **git submodule**. This app only knows how to render a lesson and run a quiz — swap
-in any fork of the content repo and you have a different course.
+## Courses
+
+| # | Course | Source |
+|---|---|---|
+| 1 | Foundations of Executor-Agnostic Workflows | `llm-workflow-content` submodule |
+| 2 | Applied Probability for LLM Verification | `local-content/` in this repo |
 
 ## Stack
 
@@ -19,13 +18,22 @@ in any fork of the content repo and you have a different course.
 ## How content flows
 
 ```
-LLM-Workflow  (submodule at ./llm-workflow-content)
-├── course.json        ── the lesson manifest
-├── docs/*.md          ── lesson content
-└── quizzes/*.json     ── assessments
-        │
-        ▼  copied to /content at build time (angular.json assets)
-this app renders /content/course.json → lessons → markdown + quiz
+llm-workflow-content/  (git submodule → github.com/bijanp24/LLM-Workflow)
+├── course.json          ── lesson manifest for "Foundations"
+├── docs/*.md            ── lesson content
+└── quizzes/*.json       ── assessments
+
+local-content/           ── authored directly in this repo
+├── catalog.json         ── lists ALL courses (id, title, description, manifest path)
+└── applied-probability/
+    ├── course.json      ── lesson manifest for "Applied Probability"
+    ├── docs/*.md        ── lesson content
+    └── quizzes/*.json   ── assessments
+
+Both folders are copied to /content at build time (angular.json assets),
+preserving their relative paths.
+
+App loads: /content/catalog.json → per-course manifest → lessons → markdown + quiz
 ```
 
 ## Getting started
@@ -45,15 +53,60 @@ Already cloned without submodules? Run:
 git submodule update --init --recursive
 ```
 
-## Updating the course content
+## Updating the submodule content
 
-The content is pinned to a specific commit of `LLM-Workflow`. To pull the latest
-lessons/quizzes:
+The "Foundations" course is pinned to a specific commit of `LLM-Workflow`. To pull the latest:
 
 ```bash
 git -C llm-workflow-content pull origin master
 git add llm-workflow-content
 git commit -m "chore: bump course content"
+```
+
+## Authoring a new course
+
+1. **Add a folder** under `local-content/your-course-id/` with:
+   - `course.json` — lesson manifest (same schema as `llm-workflow-content/course.json`)
+   - `docs/*.md` — lesson markdown files
+   - `quizzes/*.json` — quiz JSON files (see `local-content/applied-probability/quizzes/` for examples)
+
+2. **Register it** in `local-content/catalog.json`:
+   ```json
+   {
+     "id": "your-course-id",
+     "title": "Your Course Title",
+     "description": "Short description shown on the catalog page.",
+     "manifest": "your-course-id/course.json"
+   }
+   ```
+
+3. That's it. The build copies everything into `/content` automatically.
+
+### Quiz schema
+
+```json
+{
+  "id": "unique-quiz-id",
+  "title": "Quiz Title",
+  "passingScore": 0.7,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "prompt": "Question text?",
+      "options": ["A", "B", "C", "D"],
+      "answer": 1,
+      "explanation": "Why B is correct."
+    },
+    {
+      "id": "q2",
+      "type": "true-false",
+      "prompt": "True or false statement.",
+      "answer": false,
+      "explanation": "Why it is false."
+    }
+  ]
+}
 ```
 
 ## Build
@@ -62,12 +115,4 @@ git commit -m "chore: bump course content"
 npm run build        # outputs to dist/llm-workflow-academy/browser
 ```
 
-The result is fully static and can be hosted on any static host (Netlify, GitHub Pages,
-etc.). For a sub-path deployment (e.g. GitHub Pages project site), build with
-`ng build --base-href /llm-workflow-academy/`.
-
-## Authoring courses
-
-You don't touch this app to write a course — you edit the **content repo**. See
-`quizzes/README.md` in [`LLM-Workflow`](https://github.com/bijanp24/LLM-Workflow) for the
-`course.json` and quiz JSON schema.
+The result is fully static and can be hosted on any static host (Netlify, GitHub Pages, etc.). For a sub-path deployment (e.g. GitHub Pages project site), build with `ng build --base-href /llm-workflow-academy/`.

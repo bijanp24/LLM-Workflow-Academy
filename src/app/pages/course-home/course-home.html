@@ -1,16 +1,21 @@
 @if (course(); as c) {
   <header class="hero">
+    <a class="back-link" routerLink="/">← All courses</a>
     <p class="eyebrow">Free continuing education · v{{ c.version }}</p>
     <h1>{{ c.title }}</h1>
     <p class="lead">{{ c.description }}</p>
     @if (firstLessonId(); as first) {
-      <a class="cta" [routerLink]="['/lesson', first]">Start the course →</a>
+      <a class="cta" [routerLink]="['/course', courseId(), 'lesson', first]">Start the course →</a>
     }
   </header>
 
   <section class="lesson-grid">
     @for (lesson of c.lessons; track lesson.id; let i = $index) {
-      <a class="card" [routerLink]="['/lesson', lesson.id]" [class.done]="lessonComplete(lesson)">
+      <a
+        class="card"
+        [routerLink]="['/course', courseId(), 'lesson', lesson.id]"
+        [class.done]="lessonComplete(lesson)"
+      >
         <span class="num">{{ lessonComplete(lesson) ? '✓' : i + 1 }}</span>
         <span class="card-title">{{ lesson.title }}</span>
         <span class="tags">
@@ -19,7 +24,7 @@
           } @else {
             <span class="tag reading">Reading</span>
           }
-          @if (progress.quizResult(lesson.id); as r) {
+          @if (quizResult(lesson); as r) {
             <span class="tag score" [class.pass]="r.passed">{{ r.score }}/{{ r.total }}</span>
           }
         </span>

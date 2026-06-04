@@ -107,6 +107,68 @@
   }
 }
 
+.all-courses-link {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  &:hover { color: var(--accent); }
+}
+
+.sidebar-course-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+.catalog-nav {
+  flex: 1;
+
+  .catalog-nav-label {
+    margin: 0 0 0.5rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.catalog-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.88rem;
+
+  &:hover { background: var(--surface-3); }
+  &.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+  .catalog-num {
+    flex: 0 0 1.4rem;
+    height: 1.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--surface-3);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+}
+
 .sidebar-footer a {
   font-size: 0.8rem;
   color: var(--muted);

@@ -1,24 +1,43 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
-import { Course, Lesson, Quiz } from '../models/course';
+import { Observable, shareReplay, switchMap, map } from 'rxjs';
+import { Catalog, Course, Lesson, Quiz } from '../models/course';
 
 /**
- * Loads course content served from the `LLM-Workflow` git submodule.
- * The submodule's markdown + JSON are copied to `/content` at build time
- * (see angular.json assets), preserving their repo-relative paths.
+ * Loads course content served from either the `LLM-Workflow` git submodule or
+ * the academy's own `local-content` folder. Both are copied to `/content` at
+ * build time (see angular.json assets), preserving their repo-relative paths.
  */
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private readonly http = inject(HttpClient);
   private readonly base = 'content';
 
-  private readonly course$ = this.http
-    .get<Course>(`${this.base}/course.json`)
+  private readonly catalog$ = this.http
+    .get<Catalog>(`${this.base}/catalog.json`)
     .pipe(shareReplay(1));
 
-  getCourse(): Observable<Course> {
-    return this.course$;
+  private readonly courseCache = new Map<string, Observable<Course>>();
+
+  getCatalog(): Observable<Catalog> {
+    return this.catalog$;
+  }
+
+  getCourseById(courseId: string): Observable<Course> {
+    const cached = this.courseCache.get(courseId);
+    if (cached) return cached;
+
+    const course$ = this.catalog$.pipe(
+      map((catalog) => {
+        const summary = catalog.courses.find((c) => c.id === courseId);
+        if (!summary) throw new Error(`Course not found: ${courseId}`);
+        return summary.manifest;
+      }),
+      switchMap((manifest) => this.http.get<Course>(`${this.base}/${manifest}`)),
+      shareReplay(1)
+    );
+    this.courseCache.set(courseId, course$);
+    return course$;
   }
 
   /** Absolute (app-rooted) URL of a lesson's markdown doc. */

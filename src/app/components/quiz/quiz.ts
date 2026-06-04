@@ -18,6 +18,7 @@ export class QuizPlayer {
   private readonly progress = inject(ProgressService);
 
   readonly quizPath = input.required<string>();
+  readonly courseId = input.required<string>();
   readonly lessonId = input.required<string>();
 
   protected readonly quiz = toSignal(
@@ -65,7 +66,7 @@ export class QuizPlayer {
     if (!this.allAnswered()) return;
     this.submitted.set(true);
     const r = this.result();
-    if (r) this.progress.recordQuiz(this.lessonId(), r);
+    if (r) this.progress.recordQuiz(this.courseId(), this.lessonId(), r);
   }
 
   protected retry(): void {

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { combineLatest, map, switchMap } from 'rxjs';
 import { MarkdownComponent } from 'ngx-markdown';
 
 import { ContentService } from '../../services/content';
@@ -19,13 +19,25 @@ export class LessonView {
   private readonly content = inject(ContentService);
   private readonly progress = inject(ProgressService);
 
-  private readonly id = toSignal(this.route.paramMap.pipe(map((p) => p.get('id') ?? '')), {
-    initialValue: ''
-  });
-  private readonly course = toSignal(this.content.getCourse());
+  protected readonly courseId = toSignal(
+    this.route.paramMap.pipe(map((p) => p.get('courseId') ?? '')),
+    { initialValue: '' }
+  );
+
+  private readonly lessonId = toSignal(
+    this.route.paramMap.pipe(map((p) => p.get('lessonId') ?? '')),
+    { initialValue: '' }
+  );
+
+  protected readonly course = toSignal(
+    this.route.paramMap.pipe(
+      map((p) => p.get('courseId') ?? ''),
+      switchMap((id) => this.content.getCourseById(id))
+    )
+  );
 
   protected readonly lessons = computed(() => this.course()?.lessons ?? []);
-  protected readonly index = computed(() => this.lessons().findIndex((l) => l.id === this.id()));
+  protected readonly index = computed(() => this.lessons().findIndex((l) => l.id === this.lessonId()));
   protected readonly lesson = computed(() => this.lessons()[this.index()] ?? null);
   protected readonly docUrl = computed(() => {
     const l = this.lesson();
@@ -37,6 +49,6 @@ export class LessonView {
 
   protected onReady(): void {
     const l = this.lesson();
-    if (l) this.progress.markRead(l.id);
+    if (l) this.progress.markRead(this.courseId(), l.id);
   }
 }

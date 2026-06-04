@@ -1,0 +1,22 @@
+@if (catalog(); as cat) {
+  <header class="hero">
+    <p class="eyebrow">Free continuing education · LLM Academy</p>
+    <h1>{{ cat.title }}</h1>
+    <p class="lead">{{ cat.description }}</p>
+  </header>
+
+  <section class="course-grid">
+    @for (course of courses(); track course.id; let i = $index) {
+      <a class="course-card" [routerLink]="['/course', course.id]">
+        <span class="course-num">{{ i + 1 }}</span>
+        <div class="course-body">
+          <h2 class="course-title">{{ course.title }}</h2>
+          <p class="course-desc">{{ course.description }}</p>
+        </div>
+        <span class="course-arrow">→</span>
+      </a>
+    }
+  </section>
+} @else {
+  <p class="loading">Loading courses…</p>
+}
