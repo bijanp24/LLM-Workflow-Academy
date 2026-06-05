@@ -4,10 +4,13 @@ A free, static **Learning Management System** that delivers self-paced continuin
 
 ## Courses
 
-| # | Course | Source |
+All courses live in the [`LLM-Workflow`](https://github.com/bijanp24/LLM-Workflow)
+content repo, consumed here as the `llm-workflow-content` submodule.
+
+| # | Course | Path in content repo |
 |---|---|---|
-| 1 | Foundations of Executor-Agnostic Workflows | `llm-workflow-content` submodule |
-| 2 | Applied Probability for LLM Verification | `local-content/` in this repo |
+| 1 | Foundations of Executor-Agnostic Workflows | `course.json` (repo root) |
+| 2 | Applied Probability for LLM Verification | `applied-probability/` |
 
 ## Stack
 
@@ -19,19 +22,17 @@ A free, static **Learning Management System** that delivers self-paced continuin
 
 ```
 llm-workflow-content/  (git submodule → github.com/bijanp24/LLM-Workflow)
-├── course.json          ── lesson manifest for "Foundations"
-├── docs/*.md            ── lesson content
-└── quizzes/*.json       ── assessments
-
-local-content/           ── authored directly in this repo
 ├── catalog.json         ── lists ALL courses (id, title, description, manifest path)
-└── applied-probability/
-    ├── course.json      ── lesson manifest for "Applied Probability"
+├── course.json          ── lesson manifest for "Foundations" (root course)
+├── docs/*.md            ── Foundations lesson content
+├── quizzes/*.json       ── Foundations assessments
+└── applied-probability/ ── every other course is a self-contained folder
+    ├── course.json      ── lesson manifest
     ├── docs/*.md        ── lesson content
     └── quizzes/*.json   ── assessments
 
-Both folders are copied to /content at build time (angular.json assets),
-preserving their relative paths.
+The submodule is the single content source. Its files are copied to /content at
+build time (angular.json assets), preserving their relative paths.
 
 App loads: /content/catalog.json → per-course manifest → lessons → markdown + quiz
 ```
@@ -53,9 +54,10 @@ Already cloned without submodules? Run:
 git submodule update --init --recursive
 ```
 
-## Updating the submodule content
+## Updating the content
 
-The "Foundations" course is pinned to a specific commit of `LLM-Workflow`. To pull the latest:
+All content lives in the `LLM-Workflow` repo, and the app pins it to a specific
+commit via the submodule. To pull the latest content:
 
 ```bash
 git -C llm-workflow-content pull origin master
@@ -63,24 +65,17 @@ git add llm-workflow-content
 git commit -m "chore: bump course content"
 ```
 
+> When a course PR merges in `LLM-Workflow`, this submodule bump is performed
+> automatically (see that repo's automation) so the Academy redeploys with the
+> new content.
+
 ## Authoring a new course
 
-1. **Add a folder** under `local-content/your-course-id/` with:
-   - `course.json` — lesson manifest (same schema as `llm-workflow-content/course.json`)
-   - `docs/*.md` — lesson markdown files
-   - `quizzes/*.json` — quiz JSON files (see `local-content/applied-probability/quizzes/` for examples)
-
-2. **Register it** in `local-content/catalog.json`:
-   ```json
-   {
-     "id": "your-course-id",
-     "title": "Your Course Title",
-     "description": "Short description shown on the catalog page.",
-     "manifest": "your-course-id/course.json"
-   }
-   ```
-
-3. That's it. The build copies everything into `/content` automatically.
+Courses are authored in the [`LLM-Workflow`](https://github.com/bijanp24/LLM-Workflow)
+content repo, **not here**. See `COURSES.md` in that repo for the catalog,
+manifest, and quiz schemas. In short: add a `your-course-id/` folder with
+`course.json`, `docs/*.md`, and `quizzes/*.json`, register it in `catalog.json`,
+and open a PR. Once merged, this submodule is bumped and the Academy rebuilds.
 
 ### Quiz schema
 
