@@ -4,9 +4,10 @@ import { Observable, shareReplay, switchMap, map } from 'rxjs';
 import { Catalog, Course, Lesson, Quiz } from '../models/course';
 
 /**
- * Loads course content served from either the `LLM-Workflow` git submodule or
- * the academy's own `local-content` folder. Both are copied to `/content` at
- * build time (see angular.json assets), preserving their repo-relative paths.
+ * Loads course content served from the `LLM-Workflow` git submodule, the single
+ * source of static content. Its files are copied to `/content` at build time
+ * (see angular.json assets), preserving their repo-relative paths. The master
+ * `catalog.json` lives at the content root and lists every course.
  */
 @Injectable({ providedIn: 'root' })
 export class ContentService {
