@@ -1,0 +1,41 @@
+name: Bump Content Submodule
+
+# Fast-forwards the llm-workflow-content submodule to the latest content master.
+# Triggered by the content repo after a course PR merges. The resulting commit
+# is what Netlify builds from, so the new course goes live on push.
+on:
+  repository_dispatch:
+    types: [content-updated]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-content
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Update submodule to latest content master
+        run: git submodule update --init --remote llm-workflow-content
+
+      - name: Commit and push if the pointer moved
+        run: |
+          if git diff --quiet -- llm-workflow-content; then
+            echo "Content submodule already up to date — nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add llm-workflow-content
+          git commit -m "chore: bump course content submodule"
+          git push
+          echo "Bumped content submodule; Netlify will rebuild."
